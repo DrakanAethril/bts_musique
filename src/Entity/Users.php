@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -23,6 +25,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    // added by seb for easyAdmin password change
+    private ?string $plainPassword = null;
+
     /**
      * @var string The hashed password
      */
@@ -34,6 +39,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
+
+    #[ORM\ManyToMany(targetEntity: Instruments::class, mappedBy: 'users')]
+    private Collection $instruments;
+
+    public function __construct()
+    {
+        $this->instruments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -127,5 +140,46 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastname = $lastname;
 
         return $this;
+    }
+
+    public function getPlainPassword() {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Instruments>
+     */
+    public function getInstruments(): Collection
+    {
+        return $this->instruments;
+    }
+
+    public function addInstrument(Instruments $instrument): self
+    {
+        if (!$this->instruments->contains($instrument)) {
+            $this->instruments->add($instrument);
+            $instrument->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstrument(Instruments $instrument): self
+    {
+        if ($this->instruments->removeElement($instrument)) {
+            $instrument->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString() : string {
+        return $this->getFirstname().' '.$this->getLastname();
     }
 }

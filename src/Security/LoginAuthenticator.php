@@ -46,9 +46,13 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
+        $user = $token->getUser();
+        $roles = $user->getRoles();
+        if(in_array('ROLE_ADMIN', $roles)) {
+            return new RedirectResponse($this->urlGenerator->generate('admin'));
+        }
         return new RedirectResponse($this->urlGenerator->generate('home'));
-        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        
     }
 
     protected function getLoginUrl(Request $request): string
