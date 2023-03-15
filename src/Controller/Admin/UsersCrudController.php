@@ -46,6 +46,9 @@ class UsersCrudController extends AbstractCrudController
         yield AssociationField::new('instruments')
             ->setFormTypeOption('by_reference', false)
             ->autocomplete();
+        yield AssociationField::new('lessonsSlots')
+            ->setFormTypeOption('by_reference', false)
+            ->autocomplete();
         yield ChoiceField::new( 'roles' )
                          ->setChoices( array_combine( $roles, $roles ) )
                          ->allowMultipleChoices()

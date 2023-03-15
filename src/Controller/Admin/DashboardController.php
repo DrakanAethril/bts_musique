@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\Admin\UsersCrudController;
 use App\Entity\Instruments;
 use App\Entity\LessonsSlots;
+use App\Entity\LessonsDuration;
 use App\Entity\Users;
 
 class DashboardController extends AbstractDashboardController
@@ -35,5 +36,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Users', 'fas fa-user', Users::class);
         yield MenuItem::linkToCrud('Instruments', 'fas fa-music', Instruments::class);
         yield MenuItem::linkToCrud('Lessons Slots', 'fas fa-calendar', LessonsSlots::class);
+        yield MenuItem::linkToCrud('Lessons Duration', 'fas fa-clock', LessonsDuration::class);
     }
 }

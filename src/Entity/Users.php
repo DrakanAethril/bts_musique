@@ -43,9 +43,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Instruments::class, mappedBy: 'users')]
     private Collection $instruments;
 
+    #[ORM\ManyToMany(targetEntity: LessonsSlots::class, mappedBy: 'users')]
+    private Collection $lessonsSlots;
+
     public function __construct()
     {
         $this->instruments = new ArrayCollection();
+        $this->lessonsSlots = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -181,5 +185,32 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString() : string {
         return $this->getFirstname().' '.$this->getLastname();
+    }
+
+    /**
+     * @return Collection<int, LessonsSlots>
+     */
+    public function getLessonsSlots(): Collection
+    {
+        return $this->lessonsSlots;
+    }
+
+    public function addLessonsSlot(LessonsSlots $lessonsSlot): self
+    {
+        if (!$this->lessonsSlots->contains($lessonsSlot)) {
+            $this->lessonsSlots->add($lessonsSlot);
+            $lessonsSlot->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLessonsSlot(LessonsSlots $lessonsSlot): self
+    {
+        if ($this->lessonsSlots->removeElement($lessonsSlot)) {
+            $lessonsSlot->removeUser($this);
+        }
+
+        return $this;
     }
 }
